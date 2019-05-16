@@ -29,7 +29,7 @@ node {
         sh("kubectl --namespace=canary apply -f ./canary/")
         sh("echo http://`kubectl --namespace=canary get service/${appName} --output=json | jq -r '.status.loadBalancer.ingress[0].ip'` > ${appName}")
         break
-         // Roll out to release env
+          
     // Roll out to production
     case "master":
         // Change deployed image in master to the one we just built
