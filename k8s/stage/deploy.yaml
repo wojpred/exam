@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  labels:
+    app: app-demo
+    env: stage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-demo
+  template:
+    metadata:
+      labels:
+        app: app-demo
+    spec:
+      containers:
+      - name: app-demo
+        image: acrdemo99.azurecr.io/apka:1
+        ports:
+        - containerPort: 4000
+      imagePullSecrets:
+        - name: az-auth
