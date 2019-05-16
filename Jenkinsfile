@@ -30,17 +30,6 @@ node {
         sh("echo http://`kubectl --namespace=canary get service/${appName} --output=json | jq -r '.status.loadBalancer.ingress[0].ip'` > ${appName}")
         break
          // Roll out to release env
-    case "release":
-        // Change deployed image in canary to the one we just built
-        sh("kubectl get ns ${appName}-${env.BRANCH_NAME} || kubectl create ns ${appName}-${env.BRANCH_NAME}")
-        withCredentials([usernamePassword(credentialsId: 'az-auth', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-        sh "kubectl -n ${appName}-${env.BRANCH_NAME} get secret az-auth || kubectl --namespace=${appName}-${env.BRANCH_NAME} create secret docker-registry az-auth --docker-server ${acr} --docker-username $USERNAME --docker-password $PASSWORD"
-        sh("sed -i.bak 's#${appRepo}#${imageTag}#' ./release/*.yml")
-        sh("kubectl --namespace=stage apply -f ./services/")
-        sh("kubectl --namespace=stage apply -f ./release/")
-        sh("echo http://`kubectl --namespace=stage get service/${appName} --output=json | jq -r '.status.loadBalancer.ingress[0].ip'` > ${appName}")
-        break
-
     // Roll out to production
     case "master":
         // Change deployed image in master to the one we just built
